@@ -38,4 +38,12 @@ public interface AnimalDAO {
      * @return borra un id concreto
      */
     boolean deleteById(Integer id);
+
+    /**
+     * Actualiza solo el estado de un animal concreto
+     * @param id id del animal
+     * @param nuevoEstado nuevo valor para el campo estado
+     * @return true si se ha actualizado, false si no existe el animal
+     */
+    boolean updateEstado(Integer id, String nuevoEstado);
 }

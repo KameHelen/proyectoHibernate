@@ -77,14 +77,15 @@ public class AnimalDAOImpl implements AnimalDAO {
     public boolean deleteById(Integer id) {
         Session session = HibernateUtil.getSessionFactory().openSession();
         Transaction transaction = null;
+        boolean borrado = false;
         try {
             transaction = session.beginTransaction();
             Animal animal = session.get(Animal.class, id);
             if (animal != null) {
                 session.remove(animal);
-                transaction.commit();
-                return true;
+                borrado = true;
             }
+            transaction.commit();
         } catch (Exception e) {
             if (transaction != null) {
                 transaction.rollback();
@@ -93,6 +94,31 @@ public class AnimalDAOImpl implements AnimalDAO {
         } finally {
             session.close();
         }
-        return false;
+        return borrado;
+    }
+
+    @Override
+    public boolean updateEstado(Integer id, String nuevoEstado) {
+        Session session = HibernateUtil.getSessionFactory().openSession();
+        Transaction transaction = null;
+        boolean actualizado = false;
+        try {
+            transaction = session.beginTransaction();
+            Animal animal = session.get(Animal.class, id);
+            if (animal != null) {
+                animal.setEstado(nuevoEstado);
+                session.merge(animal);
+                actualizado = true;
+            }
+            transaction.commit();
+        } catch (Exception e) {
+            if (transaction != null) {
+                transaction.rollback();
+            }
+            e.printStackTrace();
+        } finally {
+            session.close();
+        }
+        return actualizado;
     }
 }

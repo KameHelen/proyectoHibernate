@@ -1,86 +1,76 @@
 package org.example.entities;
 
 import jakarta.persistence.*;
-
-import java.io.Serializable;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
-@Table(name = "animales")
-public class Animal implements Serializable {
+@Table(name = "animal")
+public class Animal {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
     private String nombre;
-
     private String especie;
 
-    private Integer edad;
-
-    @Column(name = "descripcion_perdida", length = 500)
+    @Column(length = 500)
     private String descripcionPerdida;
 
-    @Column(name = "estado_refugio", length = 50)
-    private String estadoRefugio; // "recién abandonado", "tiempo en refugio", "próximamente en acogida"
+    private String estado; // recién abandonado, tiempo en refugio, próximamente en acogida
 
-    // Constructores
+    @Enumerated(EnumType.STRING)
+    private TipoAlimento tipoAlimento;
+
+    // Persona <-> Animal: ManyToMany -> persona_animal
+    @ManyToMany(mappedBy = "animales")
+    private Set<Persona> personas = new HashSet<>();
+
+    // Animal <-> Clasificacion: ManyToMany -> animal_clasificacion
+    @ManyToMany
+    @JoinTable(
+            name = "animal_clasificacion",
+            joinColumns = @JoinColumn(name = "id_animal"),
+            inverseJoinColumns = @JoinColumn(name = "id_clasificacion")
+    )
+    private Set<Clasificacion> clasificaciones = new HashSet<>();
+
     public Animal() {}
 
-    public Animal(String nombre, String especie, Integer edad, String descripcionPerdida, String estadoRefugio) {
+    public Animal(String nombre, String especie, String descripcionPerdida,
+                  String estado, TipoAlimento tipoAlimento) {
         this.nombre = nombre;
         this.especie = especie;
-        this.edad = edad;
         this.descripcionPerdida = descripcionPerdida;
-        this.estadoRefugio = estadoRefugio;
+        this.estado = estado;
+        this.tipoAlimento = tipoAlimento;
     }
 
-    // Getters y Setters
+    // ===== GETTERS/SETTERS =====
+
     public Integer getId() {
         return id;
     }
 
-    public void setId(Integer id) {
-        this.id = id;
-    }
+    public String getNombre() { return nombre; }
+    public void setNombre(String nombre) { this.nombre = nombre; }
 
-    public String getNombre() {
-        return nombre;
-    }
+    public String getEspecie() { return especie; }
+    public void setEspecie(String especie) { this.especie = especie; }
 
-    public void setNombre(String nombre) {
-        this.nombre = nombre;
-    }
+    public String getDescripcionPerdida() { return descripcionPerdida; }
+    public void setDescripcionPerdida(String descripcionPerdida) { this.descripcionPerdida = descripcionPerdida; }
 
-    public String getEspecie() {
-        return especie;
-    }
+    public String getEstado() { return estado; }
+    public void setEstado(String estado) { this.estado = estado; }
 
-    public void setEspecie(String especie) {
-        this.especie = especie;
-    }
+    public TipoAlimento getTipoAlimento() { return tipoAlimento; }
+    public void setTipoAlimento(TipoAlimento tipoAlimento) { this.tipoAlimento = tipoAlimento; }
 
-    public Integer getEdad() {
-        return edad;
-    }
+    public Set<Persona> getPersonas() { return personas; }
+    public void setPersonas(Set<Persona> personas) { this.personas = personas; }
 
-    public void setEdad(Integer edad) {
-        this.edad = edad;
-    }
-
-    public String getDescripcionPerdida() {
-        return descripcionPerdida;
-    }
-
-    public void setDescripcionPerdida(String descripcionPerdida) {
-        this.descripcionPerdida = descripcionPerdida;
-    }
-
-    public String getEstadoRefugio() {
-        return estadoRefugio;
-    }
-
-    public void setEstadoRefugio(String estadoRefugio) {
-        this.estadoRefugio = estadoRefugio;
-    }
+    public Set<Clasificacion> getClasificaciones() { return clasificaciones; }
+    public void setClasificaciones(Set<Clasificacion> clasificaciones) { this.clasificaciones = clasificaciones; }
 }
